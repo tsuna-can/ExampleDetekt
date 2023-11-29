@@ -1,6 +1,9 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("io.gitlab.arturbosch.detekt") version "1.23.4"
 }
 
 android {
@@ -66,4 +69,25 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    detektPlugins ("io.nlopez.compose.rules:detekt:0.3.3")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.4")
+}
+
+detekt{
+    config.setFrom("${rootProject.projectDir}/config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+    autoCorrect = true
+}
+
+tasks {
+    withType<Detekt> {
+        reports {
+            html.required.set(true)
+            html.outputLocation.set(file("${buildDir}/reports/detekt.html"))
+            xml.required.set(false)
+            txt.required.set(true)
+            sarif.required.set(true)
+        }
+    }
 }
